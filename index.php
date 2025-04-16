@@ -135,12 +135,124 @@ function deleteEmployee($id) {
     $conn = null;
 }
 
+// Create the students table if it doesn't exist
+function setupStudentsDatabase() {
+    $conn = getConnection();
+    if (!$conn) return false;
+    
+    try {
+        $sql = "CREATE TABLE IF NOT EXISTS students (
+            id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            student_name VARCHAR(100) NOT NULL,
+            student_number VARCHAR(50) NOT NULL UNIQUE,
+            department VARCHAR(100) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )";
+        
+        $conn->exec($sql);
+        return true;
+    } catch(PDOException $e) {
+        echo "Error setting up database: " . $e->getMessage() . "<br>";
+        return false;
+    }
+    
+    $conn = null;
+}
+
+// CREATE: Add a new student
+function createStudent($student_name, $student_number, $department) {
+    $conn = getConnection();
+    if (!$conn) return false;
+    
+    try {
+        $sql = "INSERT INTO students (student_name, student_number, department) 
+                VALUES (:student_name, :student_number, :department)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':student_name', $student_name);
+        $stmt->bindParam(':student_number', $student_number);
+        $stmt->bindParam(':department', $department);
+        $stmt->execute();
+        
+        return $conn->lastInsertId();
+    } catch(PDOException $e) {
+        if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
+            echo "Student number already exists!";
+        } else {
+            echo "Error creating student: " . $e->getMessage();
+        }
+        return false;
+    }
+    
+    $conn = null;
+}
+
+// READ: Get all students
+function getAllStudents() {
+    $conn = getConnection();
+    if (!$conn) return [];
+    
+    try {
+        $stmt = $conn->prepare("SELECT * FROM students ORDER BY id DESC");
+        $stmt->execute();
+        
+        // Set the resulting array to associative
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    } catch(PDOException $e) {
+        echo "Error reading students: " . $e->getMessage() . "<br>";
+        return [];
+    }
+    
+    $conn = null;
+}
+
+// READ: Get student by number
+function getStudentByNumber($student_number) {
+    $conn = getConnection();
+    if (!$conn) return null;
+    
+    try {
+        $stmt = $conn->prepare("SELECT * FROM students WHERE student_number = :student_number");
+        $stmt->bindParam(':student_number', $student_number);
+        $stmt->execute();
+        
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch(PDOException $e) {
+        echo "Error retrieving student: " . $e->getMessage();
+        return null;
+    }
+    
+    $conn = null;
+}
+
+// DELETE: Delete a student
+function deleteStudent($student_number) {
+    $conn = getConnection();
+    if (!$conn) return false;
+    
+    try {
+        $sql = "DELETE FROM students WHERE student_number = :student_number";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':student_number', $student_number);
+        $stmt->execute();
+        
+        return $stmt->rowCount() > 0;
+    } catch(PDOException $e) {
+        echo "Error deleting student: " . $e->getMessage();
+        return false;
+    }
+    
+    $conn = null;
+}
+
 // Initialize database
 setupDatabase();
+setupStudentsDatabase();
 
 // Process form submission
 $message = '';
 $employee = null;
+$exchanged_amount = null;
 
 // Calculate pension amounts
 if (isset($_POST['calculate'])) {
@@ -241,8 +353,65 @@ if (isset($_POST['delete'])) {
     }
 }
 
+// Handle currency exchange calculation
+if (isset($_POST['exchange'])) {
+    $amount = isset($_POST['amount']) ? floatval($_POST['amount']) : 0;
+    $rate = isset($_POST['rate']) ? floatval($_POST['rate']) : 0;
+    
+    if ($amount > 0 && $rate > 0) {
+        $exchanged_amount = $amount * $rate;
+    }
+}
+
+// Handle student registration
+if (isset($_POST['register'])) {
+    $student_name = $_POST['student_name'] ?? '';
+    $student_number = $_POST['student_number'] ?? '';
+    $department = $_POST['department'] ?? '';
+    
+    if (!empty($student_name) && !empty($student_number) && !empty($department)) {
+        if (createStudent($student_name, $student_number, $department)) {
+            $message = "Student registered successfully!";
+            $_POST = array();
+        }
+    } else {
+        $message = "Please fill in all fields!";
+    }
+}
+
+// Handle student display
+if (isset($_POST['display'])) {
+    $student_number = $_POST['student_number'] ?? '';
+    if (!empty($student_number)) {
+        $student = getStudentByNumber($student_number);
+        if (!$student) {
+            $message = "No student found with that number!";
+        }
+    } else {
+        $message = "Please enter a student number!";
+    }
+}
+
+// Handle student deletion
+if (isset($_POST['delete'])) {
+    $student_number = $_POST['student_number'] ?? '';
+    if (!empty($student_number)) {
+        if (deleteStudent($student_number)) {
+            $message = "Student deleted successfully!";
+            $_POST = array();
+        } else {
+            $message = "No student found with that number!";
+        }
+    } else {
+        $message = "Please enter a student number!";
+    }
+}
+
 // Get recent employees for display
 $recentEmployees = getAllEmployees();
+
+// Get all students for display
+$students = getAllStudents();
 ?>
 
 <!DOCTYPE html>
@@ -250,269 +419,192 @@ $recentEmployees = getAllEmployees();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Pension Management System</title>
+    <title>ICDL Payment System</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
-        }
-        .header {
-            background-color: #0099cc;
-            color: white;
-            padding: 10px 0;
-            text-align: center;
-            border: 2px solid #006080;
-        }
-        .logo {
-            max-height: 40px;
-        }
-        .nav {
-            background-color: #f0f0f0;
-            padding: 10px 0;
-            text-align: center;
-            border-left: 2px solid #006080;
-            border-right: 2px solid #006080;
-        }
-        .nav a {
-            margin: 0 15px;
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-        }
-        .container {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-            border-left: 2px solid #006080;
-            border-right: 2px solid #006080;
-            background-color: white;
-        }
-        .sidebar {
-            width: 25%;
-            background-color: #0099cc;
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-        }
-        .content {
-            width: 48%;
-            border: 1px solid #ccc;
-            padding: 15px;
             background-color: #fff;
         }
-        .image-section {
-            width: 25%;
-            text-align: center;
+        .header img {
+            width: 100%;
+            height: auto;
         }
-        .image-section img {
-            max-width: 100%;
-            border-radius: 5px;
-        }
-        .form-row {
-            margin-bottom: 10px;
+        .main-content {
             display: flex;
+            margin: 20px;
+            gap: 20px;
         }
-        .form-row label {
-            width: 150px;
-            text-align: right;
-            margin-right: 10px;
-        }
-        .form-row input {
+        .left-panel {
             flex: 1;
         }
-        .btn-row {
-            margin-top: 20px;
-            text-align: center;
+        .left-panel img {
+            width: 100%;
+            height: auto;
         }
-        .btn {
-            padding: 5px 10px;
+        .center-panel {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .right-panel {
+            flex: 1;
+        }
+        .right-panel img {
+            width: 100%;
+            height: auto;
+        }
+        .seal {
+            width: 150px;
+            margin-bottom: 20px;
+        }
+        .form-container {
+            width: 100%;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .form-title {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            display: inline-block;
+            width: 150px;
+            margin-right: 10px;
+        }
+        .form-group input {
+            width: 200px;
+            padding: 5px;
+        }
+        .button-group {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .button-group button {
             margin: 0 5px;
-            cursor: pointer;
-        }
-        .footer {
-            background-color: #f0f0f0;
-            padding: 10px 0;
-            text-align: center;
-            border: 2px solid #006080;
-        }
-        h2 {
-            text-align: center;
-            margin-top: 0;
+            padding: 5px 15px;
         }
         .programs {
             display: flex;
             margin-top: 20px;
-            border: 2px solid #006080;
+            width: 100%;
         }
         .program {
             flex: 1;
             padding: 10px;
-            text-align: center;
             color: white;
+            text-align: center;
         }
-        .workforce {
-            background-color: #0099cc;
-        }
-        .professional {
-            background-color: #000066;
-        }
-        .insights {
-            background-color: #004d4d;
-        }
-        .student {
-            background-color: #009900;
-        }
-        .citizen {
-            background-color: #cc00cc;
-        }
+        .workforce { background-color: #00A1E1; }
+        .professional { background-color: #000066; }
+        .insights { background-color: #004d4d; }
+        .digital-student { background-color: #009900; }
+        .digital-citizen { background-color: #cc00cc; }
         .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 3px;
             background-color: #f8d7da;
             color: #721c24;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            text-align: center;
             display: <?php echo empty($message) ? 'none' : 'block'; ?>;
-        }
-        .employee-list {
-            margin-top: 20px;
-            border-top: 1px solid #ccc;
-            padding-top: 10px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAH0AAAAjCAYAAACw4jRAAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAB3RJTUUH4AYBDTUNYWEbDAAAAY5JREFUeNrt27FLW2EUxuHfTYJgIQhGRQfnDv0X7F9gW7oUsrh0EEQQHDoJjh2cXERsUTdXIVCQdnJSB50EQRDBJXTwBpXA9YMM75Dn2e6553LPO3y83HOLFOI5XuMJbuF1uvHM/sdnBhzpPbzAKhonUPwA7zDHp6gB5/iRSP/5j4S/xhbuRI31N9KrZRfNRHy/hPQefuFTlIBzfEykjxLQKaF7DzKp+KMnBR+jnUifJPM6YxRO06nCKJ0qVJfRwK1r/NcNrOEez7GUu/kQW3iacP9SgWt6QCdXp6f3dKpTnUqn0ql0Kp1Kp9KpdCqdSqfSqXQqnUqn0ql0Kp1K5w3XQSJmU3DTFZXewWcsMBv8+z0YJUKGfFbYxJ0KSH+EJ9jGE9wv2eI9fE9T8FDpFZBexQc9VDqVznl3O9A8uNjLM2Z2uobJsrg5zrCHB6XB4QD38bYiV+oeXuJBIbr9HB/wY1mFX/yL3kh9+zH2cVqR04/0c56HGbyqgvSZiOwNTnDEJf4C+o8+v2U1D0YAAAAASUVORK5CYII=" alt="ICDL Logo" class="logo">
+        <img src="images/header.jpeg" alt="ICDL Header">
     </div>
-    <div class="nav">
-        <a href="#">ABOUT US</a>
-        <a href="#">PROGRAMMES</a>
-        <a href="#">INDIVIDUALS</a>
-        <a href="#">STUDENTS</a>
-        <a href="#">EMPLOYERS</a>
-        <a href="#">PARTNERSHIPS</a>
-        <a href="#">TEST CENTRE</a>
-    </div>
-    <div class="container">
-        <div class="sidebar">
-            <h3>ICDL Foundation</h3>
-            <p>ICDL Foundation is a global social enterprise committed to raising standards of digital competence in the workforce, education and society. ICDL certification is now available in more than 100 countries, across our network of more than 20,000 testing centres, delivering more than 70 million ICDL certification tests to more than 17 million people worldwide.</p>
-            <p><a href="#" style="color: white;">Read more</a></p>
+
+    <div class="main-content">
+        <div class="left-panel">
+            <img src="images/left.jpeg" alt="ICDL Information">
         </div>
-        <div class="content">
-            <h2>EMPLOYEE PENSION MANAGEMENT SYSTEM:</h2>
-            <div class="message"><?php echo $message; ?></div>
-            <form method="post">
-                <div class="form-row">
-                    <label for="name">EMPLOYEE NAME:</label>
-                    <input type="text" id="name" name="name" value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name']) : ''; ?>" required>
-                </div>
-                <div class="form-row">
-                    <label for="address">EMPLOYEE ADDRESS:</label>
-                    <input type="text" id="address" name="address" value="<?php echo isset($_POST['address']) ? htmlspecialchars($_POST['address']) : ''; ?>" required>
-                </div>
-                <div class="form-row">
-                    <label for="salary">MONTHLY SALARY:</label>
-                    <input type="number" id="salary" name="salary" step="0.01" value="<?php echo isset($_POST['salary']) ? htmlspecialchars($_POST['salary']) : ''; ?>" required>
-                </div>
-                <div class="form-row">
-                    <label for="employment_period">EMPLOYMENT PERIOD:</label>
-                    <input type="number" id="employment_period" name="employment_period" value="<?php echo isset($_POST['employment_period']) ? htmlspecialchars($_POST['employment_period']) : ''; ?>" required>
-                </div>
-                <div class="form-row">
-                    <label for="benefit_percentage">BENEFIT IN %:</label>
-                    <input type="number" id="benefit_percentage" name="benefit_percentage" step="0.01" value="<?php echo isset($_POST['benefit_percentage']) ? htmlspecialchars($_POST['benefit_percentage']) : ''; ?>" required>
-                </div>
-                <div class="btn-row">
-                    <button type="submit" name="calculate" class="btn">CLICK TO CALCULATE</button>
-                </div>
-                <div class="form-row">
-                    <label for="total_amount">Total amount:</label>
-                    <input type="text" id="total_amount" name="total_amount" value="<?php echo isset($_POST['total_amount']) ? htmlspecialchars($_POST['total_amount']) : ''; ?>" readonly>
-                </div>
-                <div class="form-row">
-                    <label for="monthly_amount">Amount per month:</label>
-                    <input type="text" id="monthly_amount" name="monthly_amount" value="<?php echo isset($_POST['monthly_amount']) ? htmlspecialchars($_POST['monthly_amount']) : ''; ?>" readonly>
-                </div>
-                <div class="btn-row">
-                    <button type="submit" name="submit" class="btn">SUBMIT</button>
-                    <button type="submit" name="retrieve" class="btn">RETRIEVE</button>
-                    <button type="submit" name="delete" class="btn">DELETE</button>
-                </div>
-            </form>
+
+        <div class="center-panel">
+            <img src="images/seal.jpeg" alt="ISTE Seal" class="seal">
             
-            <!-- Display recent employees -->
-            <?php if (!empty($recentEmployees)): ?>
-                <div class="employee-list">
-                    <h3>Recent Employee Records</h3>
-                    <table>
-                        <tr>
-                            <th>Name</th>
-                            <th>Salary</th>
-                            <th>Employment Period</th>
-                            <th>Benefit %</th>
-                            <th>Total Amount</th>
-                            <th>Monthly Amount</th>
-                        </tr>
-                        <?php foreach ($recentEmployees as $emp): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($emp['name']); ?></td>
-                            <td>$<?php echo number_format($emp['salary'], 2); ?></td>
-                            <td><?php echo $emp['employment_period']; ?> months</td>
-                            <td><?php echo $emp['benefit_percentage']; ?>%</td>
-                            <td>$<?php echo number_format($emp['total_amount'], 2); ?></td>
-                            <td>$<?php echo number_format($emp['monthly_amount'], 2); ?></td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </table>
-                </div>
-            <?php endif; ?>
+            <div class="form-container">
+                <div class="form-title">All About ICDL Payment:</div>
+                
+                <?php if (!empty($message)): ?>
+                    <div class="message"><?php echo htmlspecialchars($message); ?></div>
+                <?php endif; ?>
+
+                <form method="post">
+                    <div class="form-group">
+                        <label>STUDENT-NAME:</label>
+                        <input type="text" name="student_name" value="<?php echo isset($_POST['student_name']) ? htmlspecialchars($_POST['student_name']) : ''; ?>">
+                    </div>
+
+                    <div class="form-group">
+                        <label>STUDENT-NUMBER:</label>
+                        <input type="text" name="student_number" value="<?php echo isset($_POST['student_number']) ? htmlspecialchars($_POST['student_number']) : ''; ?>">
+                    </div>
+
+                    <div class="form-group">
+                        <label>DEPARTMENT:</label>
+                        <input type="text" name="department" value="<?php echo isset($_POST['department']) ? htmlspecialchars($_POST['department']) : ''; ?>">
+                    </div>
+
+                    <div class="form-group">
+                        <label>ENTER ICDL MONEY/$:</label>
+                        <input type="number" step="0.01" name="amount" value="<?php echo isset($_POST['amount']) ? htmlspecialchars($_POST['amount']) : ''; ?>">
+                    </div>
+
+                    <div class="form-group">
+                        <label>EXCHANGE RATE:</label>
+                        <input type="number" step="0.01" name="rate" value="<?php echo isset($_POST['rate']) ? htmlspecialchars($_POST['rate']) : ''; ?>">
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" name="exchange">Exchange</button>
+                        <button type="submit" name="display">Display</button>
+                        <button type="submit" name="delete">Done</button>
+                    </div>
+
+                    <?php if ($exchanged_amount !== null): ?>
+                        <div class="form-group">
+                            <label>Exchanged Amount:</label>
+                            <input type="text" value="<?php echo number_format($exchanged_amount, 2); ?>" readonly>
+                        </div>
+                    <?php endif; ?>
+                </form>
+            </div>
         </div>
-        <div class="image-section">
-            <img src="https://placeholder.pics/svg/400/DEDEDE/555555/ICDL%20WORKFORCE" alt="ICDL Training">
+
+        <div class="right-panel">
+            <img src="images/right.jpeg" alt="ICDL Training">
         </div>
     </div>
-    <h2 style="margin-top: 20px; text-align: center;">ICDL Programmes</h2>
+
+    <h2 style="text-align: center; margin: 20px 0;">ICDL Programmes</h2>
     <div class="programs">
         <div class="program workforce">
             <h3>ICDL<br>Workforce</h3>
-            <p>Digital Skills for Employability and productivity</p>
+            <p>Digital Skills for Employability and Productivity</p>
         </div>
         <div class="program professional">
             <h3>ICDL<br>Professional</h3>
-            <p>Digital skills for occupational effectiveness</p>
+            <p>Digital Skills for Occupational Effectiveness</p>
         </div>
         <div class="program insights">
             <h3>ICDL<br>Insights</h3>
-            <p>Digital Understanding for business managers</p>
+            <p>Digital Understanding for Business</p>
         </div>
-        <div class="program student">
+        <div class="program digital-student">
             <h3>ICDL<br>Digital Student</h3>
-            <p>Digital Skills to design and develop, share and protect</p>
+            <p>Digital Skills to Design and Develop</p>
         </div>
-        <div class="program citizen">
+        <div class="program digital-citizen">
             <h3>ICDL<br>Digital Citizen</h3>
-            <p>Digital Skills to access, engage and build computer confidence</p>
+            <p>Digital Skills to Access and Engage</p>
         </div>
     </div>
 </body>
