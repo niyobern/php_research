@@ -14,10 +14,10 @@
     <div class="main-content">
         <div class="left-panel">
             <img src="images/left.jpeg" alt="ICDL Information">
+            <img src="images/seal.jpeg" alt="ISTE Seal" class="seal">
         </div>
 
         <div class="center-panel">
-            <img src="images/seal.jpeg" alt="ISTE Seal" class="seal">
             <?php include $content; ?>
         </div>
 

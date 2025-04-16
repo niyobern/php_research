@@ -12,26 +12,32 @@ body {
     display: flex;
     margin: 20px;
     gap: 20px;
+    border: 3px solid #1d12b1;
+    padding: 2px;
 }
 .left-panel {
-    flex: 1;
+    flex: 2;
+    display: flex;
 }
 .left-panel img {
-    width: 100%;
+    width: 50%;
     height: auto;
 }
 .center-panel {
-    flex: 2;
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 .right-panel {
     flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .right-panel img {
-    width: 100%;
-    height: auto;
+    width: 80%;
+    height: 100%;
 }
 .seal {
     width: 150px;
