@@ -7,7 +7,7 @@
 
     <form method="post">
         <div class="form-group">
-            <label>STUDENT-NAME:</label>
+            <label>STUDENT-NAMES:</label>
             <input type="text" name="student_name" value="<?php echo isset($_POST['student_name']) ? htmlspecialchars($_POST['student_name']) : ''; ?>">
         </div>
 
@@ -31,10 +31,14 @@
             <input type="number" step="0.01" name="rate" value="<?php echo isset($_POST['rate']) ? htmlspecialchars($_POST['rate']) : ''; ?>">
         </div>
 
-        <div class="button-group">
-            <button type="submit" name="exchange">Exchange</button>
+        <div class="button-group-top">
+            <button type="submit" name="exchange">CHANGE</button>
+        </div>
+
+        <div class="button-group-bottom">
+            <button type="submit" name="register">Register</button>
             <button type="submit" name="display">Display</button>
-            <button type="submit" name="delete">Done</button>
+            <button type="submit" name="delete">Delete</button>
         </div>
 
         <?php if ($exchanged_amount !== null): ?>
