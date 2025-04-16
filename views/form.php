@@ -8,17 +8,17 @@
     <form method="post">
         <div class="form-group">
             <label>STUDENT-NAMES:</label>
-            <input type="text" name="student_name" value="<?php echo isset($_POST['student_name']) ? htmlspecialchars($_POST['student_name']) : ''; ?>">
+            <input type="text" name="student_name" value="<?php echo isset($student['student_name']) ? htmlspecialchars($student['student_name']) : (isset($_POST['student_name']) ? htmlspecialchars($_POST['student_name']) : ''); ?>">
         </div>
 
         <div class="form-group">
             <label>STUDENT-NUMBER:</label>
-            <input type="text" name="student_number" value="<?php echo isset($_POST['student_number']) ? htmlspecialchars($_POST['student_number']) : ''; ?>">
+            <input type="text" name="student_number" value="<?php echo isset($student['student_number']) ? htmlspecialchars($student['student_number']) : (isset($_POST['student_number']) ? htmlspecialchars($_POST['student_number']) : ''); ?>">
         </div>
 
         <div class="form-group">
             <label>DEPARTMENT:</label>
-            <input type="text" name="department" value="<?php echo isset($_POST['department']) ? htmlspecialchars($_POST['department']) : ''; ?>">
+            <input type="text" name="department" value="<?php echo isset($student['department']) ? htmlspecialchars($student['department']) : (isset($_POST['department']) ? htmlspecialchars($_POST['department']) : ''); ?>">
         </div>
 
         <div class="form-group">
