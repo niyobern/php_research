@@ -1,0 +1,47 @@
+<div class="form-container">
+    <div class="form-title">All About ICDL Payment:</div>
+    
+    <?php if (!empty($message)): ?>
+        <div class="message"><?php echo htmlspecialchars($message); ?></div>
+    <?php endif; ?>
+
+    <form method="post">
+        <div class="form-group">
+            <label>STUDENT-NAME:</label>
+            <input type="text" name="student_name" value="<?php echo isset($_POST['student_name']) ? htmlspecialchars($_POST['student_name']) : ''; ?>">
+        </div>
+
+        <div class="form-group">
+            <label>STUDENT-NUMBER:</label>
+            <input type="text" name="student_number" value="<?php echo isset($_POST['student_number']) ? htmlspecialchars($_POST['student_number']) : ''; ?>">
+        </div>
+
+        <div class="form-group">
+            <label>DEPARTMENT:</label>
+            <input type="text" name="department" value="<?php echo isset($_POST['department']) ? htmlspecialchars($_POST['department']) : ''; ?>">
+        </div>
+
+        <div class="form-group">
+            <label>ENTER ICDL MONEY/$:</label>
+            <input type="number" step="0.01" name="amount" value="<?php echo isset($_POST['amount']) ? htmlspecialchars($_POST['amount']) : ''; ?>">
+        </div>
+
+        <div class="form-group">
+            <label>EXCHANGE RATE:</label>
+            <input type="number" step="0.01" name="rate" value="<?php echo isset($_POST['rate']) ? htmlspecialchars($_POST['rate']) : ''; ?>">
+        </div>
+
+        <div class="button-group">
+            <button type="submit" name="exchange">Exchange</button>
+            <button type="submit" name="display">Display</button>
+            <button type="submit" name="delete">Done</button>
+        </div>
+
+        <?php if ($exchanged_amount !== null): ?>
+            <div class="form-group">
+                <label>Exchanged Amount:</label>
+                <input type="text" value="<?php echo number_format($exchanged_amount, 2); ?>" readonly>
+            </div>
+        <?php endif; ?>
+    </form>
+</div> 
