@@ -31,8 +31,11 @@
             <input type="number" step="0.01" name="rate" value="<?php echo isset($_POST['rate']) ? htmlspecialchars($_POST['rate']) : ''; ?>">
         </div>
 
-        <div class="button-group-top">
+        <div class="exchange-group">
             <button type="submit" name="exchange">CHANGE</button>
+            <?php if ($exchanged_amount !== null): ?>
+                <input type="text" value="<?php echo number_format($exchanged_amount, 2); ?>" readonly>
+            <?php endif; ?>
         </div>
 
         <div class="button-group-bottom">
@@ -40,12 +43,5 @@
             <button type="submit" name="display">Display</button>
             <button type="submit" name="delete">Delete</button>
         </div>
-
-        <?php if ($exchanged_amount !== null): ?>
-            <div class="form-group">
-                <label>Exchanged Amount:</label>
-                <input type="text" value="<?php echo number_format($exchanged_amount, 2); ?>" readonly>
-            </div>
-        <?php endif; ?>
     </form>
 </div> 

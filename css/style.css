@@ -57,16 +57,34 @@ body {
 }
 .form-group {
     margin-bottom: 15px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 }
 .form-group label {
-    display: block;
-    margin-bottom: 5px;
+    flex: 0 0 auto;
     font-weight: bold;
+    margin-right: 10px;
+    white-space: nowrap;
 }
 .form-group input {
-    width: 100%;
+    width: 200px;
     padding: 5px;
     border: 1px solid #000;
+    text-align: right;
+}
+.exchange-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 15px 0;
+    gap: 10px;
+}
+.exchange-group input {
+    width: 200px;
+    padding: 5px;
+    border: 1px solid #000;
+    text-align: right;
 }
 .button-group-top {
     margin: 15px 0;
