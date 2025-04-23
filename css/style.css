@@ -19,16 +19,13 @@ body {
     gap: 20px;
     padding: 20px;
     border: 15px solid #808080;
-    border-radius: 5px;
     background: white;
 }
 
 .form-container {
     width: 400px;
-    padding: 20px;
-    border-radius: 10px;
-    position: relative;
     border: 10px solid #808000;
+    position: relative;
 }
 
 /* Login Form Specific */
@@ -39,11 +36,29 @@ body {
     color: white;
 }
 
-.login-form .inner-container {
-    border: 2px solid #ccc;
+.form-title {
+    font-size: 24px;
     padding: 20px;
+    margin-bottom: 10px;
+}
+
+.form-title::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: white;
+    margin-top: 10px;
+}
+
+.inner-container {
+    border: 2px solid #ccc;
+    margin: 20px;
+    padding: 20px;
+}
+
+.login-form .inner-container {
     background-color: rgba(255, 0, 0, 0.8);
-    margin-top: 40px;
 }
 
 /* Registration Form Specific */
@@ -54,54 +69,52 @@ body {
 }
 
 .registration-form .inner-container {
-    border: 2px solid #ccc;
-    padding: 20px;
     background-color: rgba(0, 0, 0, 0.6);
-    margin-top: 40px;
-}
-
-.form-title {
-    font-size: 24px;
-    margin-bottom: 30px;
 }
 
 .form-group {
     margin-bottom: 15px;
 }
 
-.form-group label {
-    display: inline-block;
+.login-form .form-group {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.login-form .form-group label {
     width: 120px;
-    text-align: right;
-    margin-right: 10px;
+}
+
+.registration-form .form-group label {
+    display: block;
+    margin-bottom: 5px;
 }
 
 .form-group input {
     width: 200px;
-    padding: 3px;
     background: white;
     border: 1px solid #ccc;
+    padding: 2px 5px;
 }
 
 .button-group {
     margin-top: 20px;
-    display: flex;
-    gap: 10px;
 }
 
 .login-form .button-group {
-    margin-left: 130px;
+    margin-left: 120px;
 }
 
 .registration-form .button-group {
-    margin-left: 0;
-    justify-content: center;
+    text-align: center;
 }
 
 button {
     padding: 2px 15px;
-    background: #f0f0f0;
+    background: white;
     border: 1px solid #000;
+    margin: 0 5px;
     cursor: pointer;
 }
 
@@ -217,4 +230,5 @@ button {
     border-radius: 3px;
     background-color: #f8d7da;
     color: #721c24;
+} 
 } 
