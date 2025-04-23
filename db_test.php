@@ -34,7 +34,7 @@ echo "<h2>MySQLi Connection Test</h2>";
 $mysqli_host = 'db';  // Service name in docker-compose
 $mysqli_user = 'user';
 $mysqli_pass = 'password';
-$mysqli_db = 'appdb';
+$mysqli_db = 'AccountDB';
 
 try {
     $mysqli = new mysqli($mysqli_host, $mysqli_user, $mysqli_pass, $mysqli_db);
@@ -54,7 +54,7 @@ echo "<h2>PDO Connection Test</h2>";
 $pdo_host = 'db';  // Service name in docker-compose
 $pdo_user = 'user';
 $pdo_pass = 'password';
-$pdo_db = 'appdb';
+$pdo_db = 'AccountDB';
 
 try {
     $pdo = new PDO("mysql:host=$pdo_host;dbname=$pdo_db", $pdo_user, $pdo_pass);
