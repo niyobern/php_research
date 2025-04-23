@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $address = $_POST['address'];
         $telephone = $_POST['telephone'];
         $username = $_POST['username'];
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        $password = $_POST['password'];
         
         try {
             $stmt = $pdo->prepare("INSERT INTO Credentials (first_name, last_name, address, telephone, username, password) VALUES (?, ?, ?, ?, ?, ?)");
@@ -114,8 +114,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container">
         <!-- Login Form -->
-        <div class="form-container login-form">
-            <h2 class="form-title">Login Form</h2>
+        <div class="form-container">
+            <div class="form-title">Login Form</div>
             <?php if (isset($login_error)): ?>
                 <div class="error"><?php echo $login_error; ?></div>
             <?php endif; ?>
@@ -136,8 +136,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <!-- Registration Form -->
-        <div class="form-container registration-form">
-            <h2 class="form-title">Registration Form</h2>
+        <div class="form-container">
+            <div class="form-title">Registration Form</div>
             <?php if (isset($register_error)): ?>
                 <div class="error"><?php echo $register_error; ?></div>
             <?php endif; ?>
