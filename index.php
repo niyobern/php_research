@@ -114,66 +114,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container">
         <!-- Login Form -->
-        <div class="form-container">
+        <div class="form-container login-form">
             <div class="form-title">Login Form</div>
-            <?php if (isset($login_error)): ?>
-                <div class="error"><?php echo $login_error; ?></div>
-            <?php endif; ?>
-            <form method="POST">
-                <div class="form-group">
-                    <label for="username">User-Name:</label>
-                    <input type="text" id="username" name="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <div class="button-group">
-                    <button type="submit" name="login">Login</button>
-                    <button type="reset">Cancel</button>
-                </div>
-            </form>
+            <div class="inner-container">
+                <?php if (isset($login_error)): ?>
+                    <div class="error"><?php echo $login_error; ?></div>
+                <?php endif; ?>
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="username">User-Name:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" name="login">Login</button>
+                        <button type="reset">Cancel</button>
+                    </div>
+                </form>
+            </div>
         </div>
 
         <!-- Registration Form -->
-        <div class="form-container">
+        <div class="form-container registration-form">
             <div class="form-title">Registration Form</div>
-            <?php if (isset($register_error)): ?>
-                <div class="error"><?php echo $register_error; ?></div>
-            <?php endif; ?>
-            <?php if (isset($success_message)): ?>
-                <div class="success"><?php echo $success_message; ?></div>
-            <?php endif; ?>
-            <form method="POST">
-                <div class="form-group">
-                    <label for="first_name">FIRST-NAME:</label>
-                    <input type="text" id="first_name" name="first_name" required>
-                </div>
-                <div class="form-group">
-                    <label for="last_name">LAST-NAME:</label>
-                    <input type="text" id="last_name" name="last_name" required>
-                </div>
-                <div class="form-group">
-                    <label for="address">ADDRESS:</label>
-                    <input type="text" id="address" name="address" required>
-                </div>
-                <div class="form-group">
-                    <label for="telephone">TELEPHONE:</label>
-                    <input type="tel" id="telephone" name="telephone" required>
-                </div>
-                <div class="form-group">
-                    <label for="reg_username">USER-NAME:</label>
-                    <input type="text" id="reg_username" name="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="reg_password">PASSWORD:</label>
-                    <input type="password" id="reg_password" name="password" required>
-                </div>
-                <div class="button-group">
-                    <button type="submit" name="signup">Signup</button>
-                    <button type="reset">Cancel</button>
-                </div>
-            </form>
+            <div class="inner-container">
+                <?php if (isset($register_error)): ?>
+                    <div class="error"><?php echo $register_error; ?></div>
+                <?php endif; ?>
+                <?php if (isset($success_message)): ?>
+                    <div class="success"><?php echo $success_message; ?></div>
+                <?php endif; ?>
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="first_name">FIRST-NAMES:</label>
+                        <input type="text" id="first_name" name="first_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="last_name">LAST-NAME:</label>
+                        <input type="text" id="last_name" name="last_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">ADDRESS:</label>
+                        <input type="text" id="address" name="address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telephone">TELEPHONE:</label>
+                        <input type="tel" id="telephone" name="telephone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg_username">USER-NAME:</label>
+                        <input type="text" id="reg_username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg_password">PASSWORD:</label>
+                        <input type="password" id="reg_password" name="password" required>
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" name="signup">Signup</button>
+                        <button type="reset">Cancel</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </body>
