@@ -1,106 +1,112 @@
 <?php
+ob_start();
 session_start();
-require_once 'config/database.php';
-require_once 'models/Student.php';
 
-// Initialize database
-Student::setupDatabase();
+try {
+    require_once 'config/database.php';
+    require_once 'models/Student.php';
 
-// Process form submission
-$message = '';
-$exchanged_amount = null;
+    // Initialize database
+    Student::setupDatabase();
 
-// Handle currency exchange calculation
-if (isset($_POST['exchange'])) {
-    $amount = isset($_POST['amount']) ? floatval($_POST['amount']) : 0;
-    $rate = isset($_POST['rate']) ? floatval($_POST['rate']) : 0;
-    
-    if ($amount > 0 && $rate > 0) {
-        $exchanged_amount = $amount * $rate;
-    }
-}
+    // Process form submission
+    $message = '';
+    $exchanged_amount = null;
 
-// Handle student registration
-if (isset($_POST['register'])) {
-    $student_name = $_POST['student_name'] ?? '';
-    $student_number = $_POST['student_number'] ?? '';
-    $department = $_POST['department'] ?? '';
-    
-    if (!empty($student_name) && !empty($student_number) && !empty($department)) {
-        if (Student::create($student_name, $student_number, $department)) {
-            $message = "Student registered successfully!";
-            $_POST = array();
+    // Handle currency exchange calculation
+    if (isset($_POST['exchange'])) {
+        $amount = isset($_POST['amount']) ? floatval($_POST['amount']) : 0;
+        $rate = isset($_POST['rate']) ? floatval($_POST['rate']) : 0;
+        
+        if ($amount > 0 && $rate > 0) {
+            $exchanged_amount = $amount * $rate;
         }
-    } else {
-        $message = "Please fill in all fields!";
     }
-}
 
-// Handle student display
-if (isset($_POST['display'])) {
-    $student_number = $_POST['student_number'] ?? '';
-    if (!empty($student_number)) {
-        $student = Student::getByNumber($student_number);
-        if (!$student) {
-            $message = "No student found with that number!";
-        }
-    } else {
-        $message = "Please enter a student number!";
-    }
-}
-
-// Handle student deletion
-if (isset($_POST['delete'])) {
-    $student_number = $_POST['student_number'] ?? '';
-    if (!empty($student_number)) {
-        if (Student::delete($student_number)) {
-            $message = "Student deleted successfully!";
-            $_POST = array();
+    // Handle student registration
+    if (isset($_POST['register'])) {
+        $student_name = $_POST['student_name'] ?? '';
+        $student_number = $_POST['student_number'] ?? '';
+        $department = $_POST['department'] ?? '';
+        
+        if (!empty($student_name) && !empty($student_number) && !empty($department)) {
+            if (Student::create($student_name, $student_number, $department)) {
+                $message = "Student registered successfully!";
+                $_POST = array();
+            }
         } else {
-            $message = "No student found with that number!";
+            $message = "Please fill in all fields!";
         }
-    } else {
-        $message = "Please enter a student number!";
     }
-}
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['login'])) {
-        $username = $_POST['username'];
-        $password = $_POST['password'];
-        
-        $stmt = $pdo->prepare("SELECT * FROM Credentials WHERE username = ?");
-        $stmt->execute([$username]);
-        $user = $stmt->fetch();
-        
-        if ($user && password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            header("Location: dashboard.php");
-            exit();
+    // Handle student display
+    if (isset($_POST['display'])) {
+        $student_number = $_POST['student_number'] ?? '';
+        if (!empty($student_number)) {
+            $student = Student::getByNumber($student_number);
+            if (!$student) {
+                $message = "No student found with that number!";
+            }
         } else {
-            $login_error = "Invalid username or password";
+            $message = "Please enter a student number!";
         }
-    } elseif (isset($_POST['signup'])) {
-        $first_name = $_POST['first_name'];
-        $last_name = $_POST['last_name'];
-        $address = $_POST['address'];
-        $telephone = $_POST['telephone'];
-        $username = $_POST['username'];
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-        
-        try {
-            $stmt = $pdo->prepare("INSERT INTO Credentials (first_name, last_name, address, telephone, username, password) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$first_name, $last_name, $address, $telephone, $username, $password]);
-            $success_message = "Registration successful! Please login.";
-        } catch (PDOException $e) {
-            if ($e->getCode() == 23000) {
-                $register_error = "Username already exists";
+    }
+
+    // Handle student deletion
+    if (isset($_POST['delete'])) {
+        $student_number = $_POST['student_number'] ?? '';
+        if (!empty($student_number)) {
+            if (Student::delete($student_number)) {
+                $message = "Student deleted successfully!";
+                $_POST = array();
             } else {
-                $register_error = "Registration failed. Please try again.";
+                $message = "No student found with that number!";
+            }
+        } else {
+            $message = "Please enter a student number!";
+        }
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_POST['login'])) {
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+            
+            $stmt = $pdo->prepare("SELECT * FROM Credentials WHERE username = ?");
+            $stmt->execute([$username]);
+            $user = $stmt->fetch();
+            
+            if ($user && password_verify($password, $user['password'])) {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
+                header("Location: dashboard.php");
+                exit();
+            } else {
+                $login_error = "Invalid username or password";
+            }
+        } elseif (isset($_POST['signup'])) {
+            $first_name = $_POST['first_name'];
+            $last_name = $_POST['last_name'];
+            $address = $_POST['address'];
+            $telephone = $_POST['telephone'];
+            $username = $_POST['username'];
+            $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+            
+            try {
+                $stmt = $pdo->prepare("INSERT INTO Credentials (first_name, last_name, address, telephone, username, password) VALUES (?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$first_name, $last_name, $address, $telephone, $username, $password]);
+                $success_message = "Registration successful! Please login.";
+            } catch (PDOException $e) {
+                if ($e->getCode() == 23000) {
+                    $register_error = "Username already exists";
+                } else {
+                    $register_error = "Registration failed. Please try again.";
+                }
             }
         }
     }
+} catch (Exception $e) {
+    $error_message = $e->getMessage();
 }
 ?>
 <!DOCTYPE html>
@@ -112,6 +118,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <?php if (isset($error_message)): ?>
+        <div class="error" style="text-align: center; margin: 20px;"><?php echo htmlspecialchars($error_message); ?></div>
+    <?php endif; ?>
+    
     <div class="container">
         <!-- Login Form -->
         <div class="form-container login-form">

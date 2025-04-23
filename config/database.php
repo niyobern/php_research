@@ -12,8 +12,7 @@ function getConnection() {
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         return $conn;
     } catch(PDOException $e) {
-        echo "Connection failed: " . $e->getMessage();
-        return null;
+        throw new Exception("Connection failed: " . $e->getMessage());
     }
 }
 
@@ -35,6 +34,6 @@ try {
     $pdo->exec($sql);
     
 } catch(PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+    throw new Exception("Database setup failed: " . $e->getMessage());
 }
 ?> 
