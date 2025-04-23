@@ -4,16 +4,22 @@ $dbname = 'AccountDB';
 $username = 'user';
 $password = 'password';
 
+function getConnection() {
+    global $host, $dbname, $username, $password;
+    
+    try {
+        $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        return $conn;
+    } catch(PDOException $e) {
+        echo "Connection failed: " . $e->getMessage();
+        return null;
+    }
+}
+
 try {
-    $pdo = new PDO("mysql:host=$host", $username, $password);
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
-    // Create database if not exists
-    $sql = "CREATE DATABASE IF NOT EXISTS $dbname";
-    $pdo->exec($sql);
-    
-    // Select the database
-    $pdo->exec("USE $dbname");
     
     // Create table if not exists
     $sql = "CREATE TABLE IF NOT EXISTS Credentials (
