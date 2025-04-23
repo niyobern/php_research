@@ -11,6 +11,6 @@
       ]
     }
   },
-  "forwardPorts": [80, 3306],
+  "forwardPorts": [80, 3306, 8080],
   "postCreateCommand": "php -v"
 }
