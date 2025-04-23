@@ -33,6 +33,8 @@ body {
     background: url('../images/login.png') no-repeat center center;
     background-size: cover;
     background-color: #ff0000;
+    display: flex;
+    flex-direction: column;
 }
 
 .login-form .form-title {
@@ -63,6 +65,7 @@ body {
 .login-form .inner-container {
     background-color: rgba(255, 0, 0, 0.8);
     color: black;
+    margin: auto 10px;
 }
 
 /* Registration Form Specific */
