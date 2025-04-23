@@ -11,11 +11,16 @@ body {
     align-items: center;
     min-height: 100vh;
     padding: 20px;
+    background: white;
 }
 
 .container {
     display: flex;
     gap: 20px;
+    padding: 20px;
+    border: 15px solid #808080;
+    border-radius: 5px;
+    background: white;
 }
 
 .form-container {
@@ -23,6 +28,7 @@ body {
     padding: 20px;
     border-radius: 10px;
     position: relative;
+    border: 10px solid #808000;
 }
 
 /* Login Form Specific */
