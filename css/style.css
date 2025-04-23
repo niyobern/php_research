@@ -27,7 +27,7 @@ body {
 
 /* Login Form Specific */
 .login-form {
-    background: url('../images/login.png') no-repeat center center;
+    background: url('/images/login.png') no-repeat center center;
     background-size: cover;
     background-color: #ff0000;
     color: white;
@@ -42,7 +42,7 @@ body {
 
 /* Registration Form Specific */
 .registration-form {
-    background: url('../images/back.jpg') no-repeat center center;
+    background: url('/images/back.jpg') no-repeat center center;
     background-size: cover;
     color: white;
 }
