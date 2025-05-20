@@ -103,7 +103,7 @@ $total_responses = $stmt->fetchColumn();
                 <?php else: ?>
                     <div class="list-group">
                         <?php foreach ($surveys as $survey): ?>
-                            <a href="index.php?page=surveys&id=<?php echo $survey['id']; ?>" class="list-group-item list-group-item-action">
+                            <a href="index.php?page=surveys&project_id=<?php echo $survey['project_id']; ?>" class="list-group-item list-group-item-action">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1"><?php echo htmlspecialchars($survey['title']); ?></h5>
                                     <small class="text-muted"><?php echo date('M d, Y', strtotime($survey['created_at'])); ?></small>
