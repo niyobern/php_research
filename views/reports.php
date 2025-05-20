@@ -33,7 +33,7 @@ $surveys = $stmt->fetchAll();
                         <div class="btn-group">
                             <a href="index.php?page=view_report&survey_id=<?php echo $survey['id']; ?>" 
                                class="btn btn-primary">View Report</a>
-                            <a href="index.php?page=generate_pdf&survey_id=<?php echo $survey['id']; ?>" 
+                            <a href="generate_pdf.php?survey_id=<?php echo $survey['id']; ?>" 
                                class="btn btn-outline-primary">Download PDF</a>
                         </div>
                     </div>

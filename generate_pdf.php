@@ -1,9 +1,12 @@
 <?php
-ob_start(); // Start output buffering
-require_once __DIR__ . '/../vendor/autoload.php';
+session_start();
+require_once 'config/database.php';
+require_once 'vendor/autoload.php';
 
-// Prevent any output before PDF generation
-if (ob_get_length()) ob_clean();
+// Check if user is authenticated
+if (!isset($_SESSION['user_id'])) {
+    die('Please login to access this page.');
+}
 
 $survey_id = isset($_GET['survey_id']) ? intval($_GET['survey_id']) : 0;
 if (!$survey_id) {
@@ -156,9 +159,6 @@ foreach ($participant_responses as $participant_id => $participant_data) {
     
     $pdf->Ln(5);
 }
-
-// Clear any previous output
-ob_end_clean();
 
 // Output the PDF
 $pdf->Output($survey['title'] . '_report.pdf', 'D'); 
