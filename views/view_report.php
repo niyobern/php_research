@@ -50,8 +50,11 @@ foreach ($responses as $response) {
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Report: <?php echo htmlspecialchars($survey['title']); ?></h2>
-        <a href="index.php?page=generate_pdf&survey_id=<?php echo $survey_id; ?>" 
-           class="btn btn-primary">Download PDF</a>
+        <div class="btn-group">
+            <a href="index.php?page=reports" class="btn btn-secondary">Back to Reports</a>
+            <a href="generate_pdf.php?survey_id=<?php echo $survey_id; ?>" 
+               class="btn btn-outline-primary">Download PDF</a>
+        </div>
     </div>
 
     <div class="card mb-4">
