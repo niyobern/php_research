@@ -33,27 +33,31 @@ try {
     )";
     $pdo->exec($sql);
 
-    // Create Surveys table
+    // Create Surveys table (with open_date and close_date for scheduling)
     $sql = "CREATE TABLE IF NOT EXISTS Surveys (
         id INT AUTO_INCREMENT PRIMARY KEY,
         project_id INT NOT NULL,
         title VARCHAR(255) NOT NULL,
         description TEXT,
         status ENUM('draft', 'active', 'closed') DEFAULT 'draft',
+        open_date DATETIME NULL,
+        close_date DATETIME NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (project_id) REFERENCES ResearchProjects(id)
     )";
     $pdo->exec($sql);
 
-    // Create Questions table
+    // Create Questions table (supporting all types and conditional logic)
     $sql = "CREATE TABLE IF NOT EXISTS Questions (
         id INT AUTO_INCREMENT PRIMARY KEY,
         survey_id INT NOT NULL,
         question_text TEXT NOT NULL,
-        question_type ENUM('text', 'multiple_choice', 'single_choice', 'rating') NOT NULL,
+        question_type ENUM('text', 'multiple_choice', 'single_choice', 'rating', 'date', 'likert') NOT NULL,
         options JSON,
         required BOOLEAN DEFAULT false,
         order_number INT NOT NULL,
+        show_if_question_id INT DEFAULT NULL,
+        show_if_value VARCHAR(255) DEFAULT NULL,
         FOREIGN KEY (survey_id) REFERENCES Surveys(id)
     )";
     $pdo->exec($sql);

@@ -54,7 +54,7 @@ if (isset($_POST['add_question'])) {
     }
     $required = isset($_POST['required']) ? 1 : 0;
     $order_number = intval($_POST['order_number'] ?? 1);
-    $show_if_question_id = $_POST['show_if_question_id'] ?? null;
+    $show_if_question_id = isset($_POST['show_if_question_id']) && $_POST['show_if_question_id'] !== '' ? $_POST['show_if_question_id'] : null;
     $show_if_value = $_POST['show_if_value'] ?? null;
     $errors = [];
     if ($question_text === '') {
@@ -73,8 +73,9 @@ if (isset($_POST['add_question'])) {
 if (isset($_POST['update_survey_schedule'])) {
     $open_date = $_POST['open_date'] ?? null;
     $close_date = $_POST['close_date'] ?? null;
-    $stmt = $pdo->prepare("UPDATE Surveys SET open_date = ?, close_date = ? WHERE id = ?");
-    $stmt->execute([$open_date, $close_date, $survey_id]);
+    $status = $_POST['status'] ?? 'draft';
+    $stmt = $pdo->prepare("UPDATE Surveys SET open_date = ?, close_date = ?, status = ? WHERE id = ?");
+    $stmt->execute([$open_date, $close_date, $status, $survey_id]);
     set_flash('Survey schedule updated!', 'success');
     header('Location: index.php?page=create_survey&survey_id=' . $survey_id);
     exit();
@@ -167,6 +168,14 @@ $questions = $stmt->fetchAll();
                         <label for="close_date" class="form-label">Close Date</label>
                         <input type="datetime-local" class="form-control" id="close_date" name="close_date" value="<?php echo isset($survey['close_date']) ? date('Y-m-d\TH:i', strtotime($survey['close_date'])) : ''; ?>">
                     </div>
+                </div>
+                <div class="mb-3">
+                    <label for="status" class="form-label">Survey Status</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="draft" <?php echo ($survey['status'] ?? 'draft') === 'draft' ? 'selected' : ''; ?>>Draft</option>
+                        <option value="active" <?php echo ($survey['status'] ?? '') === 'active' ? 'selected' : ''; ?>>Active</option>
+                    </select>
+                    <small class="form-text text-muted">Draft surveys are not visible to participants. Active surveys are available for responses.</small>
                 </div>
                 <button type="submit" name="update_survey_schedule" class="btn btn-outline-primary">Update Schedule</button>
             </form>

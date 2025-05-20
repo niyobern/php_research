@@ -21,28 +21,31 @@ if (isset($_POST['edit_project'])) {
     exit();
 }
 // Handle new project creation
+$errors = [];
 if (isset($_POST['create_project'])) {
     $title = trim($_POST['title'] ?? '');
     $description = trim($_POST['description'] ?? '');
     $status = $_POST['status'] ?? 'draft';
-    $errors = [];
     if ($title === '') {
         $errors[] = 'Project title is required.';
     }
     if (empty($errors)) {
         $stmt = $pdo->prepare("INSERT INTO ResearchProjects (title, description, researcher_id, status) VALUES (?, ?, ?, ?)");
         $stmt->execute([$title, $description, $_SESSION['user_id'], $status]);
-        echo '<div class="alert alert-success">Project created successfully!</div>';
-    } else {
-        echo '<div class="alert alert-danger">' . implode('<br>', $errors) . '</div>';
+        set_flash('Project created successfully!', 'success');
+        header('Location: index.php?page=projects');
+        exit();
     }
 }
-
 // Fetch all projects for the user
 $stmt = $pdo->prepare("SELECT * FROM ResearchProjects WHERE researcher_id = ? ORDER BY created_at DESC");
 $stmt->execute([$_SESSION['user_id']]);
 $projects = $stmt->fetchAll();
 ?>
+
+<?php if (!empty($errors)): ?>
+    <div class="alert alert-danger"><?php echo implode('<br>', $errors); ?></div>
+<?php endif; ?>
 
 <div class="container">
     <h2 class="mt-4">Research Projects</h2>

@@ -19,8 +19,8 @@
                 <div class="col-md-4">
                     <h5 class="mb-3">Contact</h5>
                     <ul class="list-unstyled text-muted">
-                        <li><i class="bi bi-envelope me-2"></i>support@researchsurvey.com</li>
-                        <li><i class="bi bi-telephone me-2"></i>+1 (555) 123-4567</li>
+                        <li><i class="bi bi-envelope me-2"></i>niyobern@outlook.com</li>
+                        <li><i class="bi bi-telephone me-2"></i>+250786082841</li>
                     </ul>
                 </div>
             </div>

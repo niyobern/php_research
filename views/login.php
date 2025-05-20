@@ -4,10 +4,10 @@ $login_error = $login_error ?? null;
 ?>
 
 <div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
+    <div class="col-12">
+        <div class="card auth-card">
             <div class="card-header">
-                <h3 class="text-center">Login</h3>
+                <h3 class="text-center mb-0">Login</h3>
             </div>
             <div class="card-body">
                 <?php if (isset($login_error)): ?>
@@ -29,7 +29,7 @@ $login_error = $login_error ?? null;
                 </form>
                 
                 <div class="text-center mt-3">
-                    <p>Don't have an account? <a href="index.php?page=register">Register here</a></p>
+                    <p class="mb-0">Don't have an account? <a href="index.php?page=register">Register here</a></p>
                 </div>
             </div>
         </div>

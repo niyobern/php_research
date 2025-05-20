@@ -4,10 +4,10 @@ $errors = $errors ?? [];
 ?>
 
 <div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
+    <div class="col-12">
+        <div class="card auth-card">
             <div class="card-header">
-                <h3 class="text-center">Register</h3>
+                <h3 class="text-center mb-0">Register</h3>
             </div>
             <div class="card-body">
                 <?php if (!empty($errors)): ?>
@@ -51,7 +51,7 @@ $errors = $errors ?? [];
                 </form>
                 
                 <div class="text-center mt-3">
-                    <p>Already have an account? <a href="index.php?page=login">Login here</a></p>
+                    <p class="mb-0">Already have an account? <a href="index.php?page=login">Login here</a></p>
                 </div>
             </div>
         </div>

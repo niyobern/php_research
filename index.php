@@ -1,6 +1,7 @@
 <?php
+ob_start();
 session_start();
-require_once 'config/database.php';
+    require_once 'config/database.php';
 
 // Flash message helpers
 function set_flash($msg, $type = 'success') {
@@ -45,18 +46,18 @@ if ($page === 'login' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     
     try {
         $stmt = $pdo->prepare("SELECT * FROM Users WHERE username = ?");
-        $stmt->execute([$username]);
-        $user = $stmt->fetch();
-        
-        if ($user && password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
+            $stmt->execute([$username]);
+            $user = $stmt->fetch();
+            
+            if ($user && password_verify($password, $user['password'])) {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
             header('Location: index.php?page=home');
-            exit();
-        } else {
-            $login_error = "Invalid username or password";
-        }
+                exit();
+            } else {
+                $login_error = "Invalid username or password";
+            }
     } catch (PDOException $e) {
         $login_error = "Login failed. Please try again.";
     }
@@ -88,7 +89,7 @@ if ($page === 'register' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$username, $email]);
             if ($stmt->fetchColumn() > 0) {
                 $errors[] = "Username or email already exists";
-            } else {
+                } else {
                 // Create new user
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
                 $stmt = $pdo->prepare("INSERT INTO Users (username, email, password, first_name, last_name) VALUES (?, ?, ?, ?, ?)");
@@ -157,4 +158,5 @@ switch ($page) {
 
 // Footer
 include 'views/footer.php';
+ob_end_flush();
 ?>

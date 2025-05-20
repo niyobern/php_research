@@ -82,32 +82,33 @@
             </div>
         </div>
     <?php endif; ?>
-    <div class="container mt-4">
-        <?php
-        // Breadcrumbs logic
-        $page = $_GET['page'] ?? 'home';
-        $crumbs = [['Home', 'index.php']];
-        if ($page === 'projects') {
-            $crumbs[] = ['Projects', 'index.php?page=projects'];
-        } elseif ($page === 'surveys' && isset($_GET['project_id'])) {
-            $crumbs[] = ['Projects', 'index.php?page=projects'];
-            $crumbs[] = ['Surveys', 'index.php?page=surveys&project_id=' . intval($_GET['project_id'])];
-        } elseif ($page === 'create_survey' && isset($_GET['survey_id'])) {
-            $crumbs[] = ['Projects', 'index.php?page=projects'];
-            $crumbs[] = ['Surveys', 'index.php?page=surveys'];
-            $crumbs[] = ['Edit Survey', '#'];
-        } elseif ($page === 'view_responses' && isset($_GET['survey_id'])) {
-            $crumbs[] = ['Projects', 'index.php?page=projects'];
-            $crumbs[] = ['Surveys', 'index.php?page=surveys'];
-            $crumbs[] = ['Responses', '#'];
-        } elseif ($page === 'public_survey' && isset($_GET['survey_id'])) {
-            $crumbs[] = ['Public Survey', '#'];
-        }
-        ?>
-        <nav aria-label="breadcrumb">
+    <?php
+    // Always define $page and $crumbs before using them
+    $page = $_GET['page'] ?? 'home';
+    $crumbs = [['Home', 'index.php']];
+    if ($page === 'projects') {
+        $crumbs[] = ['Projects', 'index.php?page=projects'];
+    } elseif ($page === 'surveys' && isset($_GET['project_id'])) {
+        $crumbs[] = ['Projects', 'index.php?page=projects'];
+        $crumbs[] = ['Surveys', 'index.php?page=surveys&project_id=' . intval($_GET['project_id'])];
+    } elseif ($page === 'create_survey' && isset($_GET['survey_id'])) {
+        $crumbs[] = ['Projects', 'index.php?page=projects'];
+        $crumbs[] = ['Surveys', 'index.php?page=surveys'];
+        $crumbs[] = ['Edit Survey', '#'];
+    } elseif ($page === 'view_responses' && isset($_GET['survey_id'])) {
+        $crumbs[] = ['Projects', 'index.php?page=projects'];
+        $crumbs[] = ['Surveys', 'index.php?page=surveys'];
+        $crumbs[] = ['Responses', '#'];
+    } elseif ($page === 'public_survey' && isset($_GET['survey_id'])) {
+        $crumbs[] = ['Public Survey', '#'];
+    }
+    ?>
+    <div class="container">
+        <?php if ($page !== 'login' && $page !== 'register'): ?>
+        <nav aria-label="breadcrumb" class="mt-4">
             <ol class="breadcrumb">
                 <?php foreach ($crumbs as $i => $c): ?>
-                    <li class="breadcrumb-item<?php if ($i === count($crumbs) - 1) echo ' active'; ?>"<?php if ($i === count($crumbs) - 1) echo ' aria-current="page"'; ?>>
+                    <li class="breadcrumb-item<?php if ($i === count($crumbs) - 1) echo ' active'; ?>"<?php if ($i === count($crumbs) - 1) echo ' aria-current=\"page\"'; ?>>
                         <?php if ($i !== count($crumbs) - 1): ?>
                             <a href="<?php echo $c[1]; ?>"><?php echo htmlspecialchars($c[0]); ?></a>
                         <?php else: ?>
@@ -117,5 +118,6 @@
                 <?php endforeach; ?>
             </ol>
         </nav>
-        <div class="main-content">
+        <?php endif; ?>
+        <div class="main-content<?php echo ($page === 'login' || $page === 'register') ? ' mt-5' : ''; ?>">
     </div> 
