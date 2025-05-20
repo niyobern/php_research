@@ -206,4 +206,5 @@ function toggleEditOptionsField() {
 }
 document.getElementById('question_type_select').addEventListener('change', toggleOptionsField);
 document.getElementById('edit_question_type_select').addEventListener('change', toggleEditOptionsField);
-</script> 
+</script>
+</div> <!-- end .main-content --> 

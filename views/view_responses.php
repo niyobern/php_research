@@ -59,4 +59,5 @@ $responses = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </table>
         <?php endif; ?>
     </div>
-</div> 
+</div>
+</div> <!-- end .main-content --> 

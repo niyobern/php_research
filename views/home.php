@@ -117,4 +117,6 @@ $total_responses = $stmt->fetchColumn();
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+</div> <!-- end .main-content --> 

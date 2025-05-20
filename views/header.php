@@ -54,7 +54,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
-    <div class="container mt-4 main-content">
+    <div class="container mt-4">
         <?php
         // Breadcrumbs logic
         $page = $_GET['page'] ?? 'home';
@@ -89,4 +89,5 @@
                 <?php endforeach; ?>
             </ol>
         </nav>
+        <div class="main-content">
     </div> 

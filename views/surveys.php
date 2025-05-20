@@ -108,4 +108,5 @@ function copyPublicLink(link) {
         alert('Public link copied to clipboard!');
     });
 }
-</script> 
+</script>
+</div> <!-- end .main-content --> 

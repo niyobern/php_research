@@ -141,4 +141,5 @@ function showEditProject(id, title, description, status) {
     var modal = new bootstrap.Modal(document.getElementById('editProjectModal'));
     modal.show();
 }
-</script> 
+</script>
+</div> <!-- end .main-content --> 
