@@ -1,44 +1,6 @@
 <?php
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'] ?? '';
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
-    $confirm_password = $_POST['confirm_password'] ?? '';
-    $first_name = $_POST['first_name'] ?? '';
-    $last_name = $_POST['last_name'] ?? '';
-    
-    $errors = [];
-    
-    // Validation
-    if (empty($username)) $errors[] = "Username is required";
-    if (empty($email)) $errors[] = "Email is required";
-    if (empty($password)) $errors[] = "Password is required";
-    if ($password !== $confirm_password) $errors[] = "Passwords do not match";
-    if (empty($first_name)) $errors[] = "First name is required";
-    if (empty($last_name)) $errors[] = "Last name is required";
-    
-    if (empty($errors)) {
-        try {
-            // Check if username or email already exists
-            $stmt = $pdo->prepare("SELECT COUNT(*) FROM Users WHERE username = ? OR email = ?");
-            $stmt->execute([$username, $email]);
-            if ($stmt->fetchColumn() > 0) {
-                $errors[] = "Username or email already exists";
-            } else {
-                // Create new user
-                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare("INSERT INTO Users (username, email, password, first_name, last_name) VALUES (?, ?, ?, ?, ?)");
-                $stmt->execute([$username, $email, $hashed_password, $first_name, $last_name]);
-                
-                $_SESSION['success'] = "Registration successful! Please login.";
-                header('Location: index.php?page=login');
-                exit();
-            }
-        } catch (PDOException $e) {
-            $errors[] = "Registration failed. Please try again.";
-        }
-    }
-}
+// Get errors from the main index file if they exist
+$errors = $errors ?? [];
 ?>
 
 <div class="row justify-content-center">

@@ -1,26 +1,6 @@
 <?php
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
-    
-    try {
-        $stmt = $pdo->prepare("SELECT * FROM Users WHERE username = ?");
-        $stmt->execute([$username]);
-        $user = $stmt->fetch();
-        
-        if ($user && password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            $_SESSION['role'] = $user['role'];
-            header('Location: index.php?page=home');
-            exit();
-        } else {
-            $error = "Invalid username or password";
-        }
-    } catch (PDOException $e) {
-        $error = "Login failed. Please try again.";
-    }
-}
+// Get login error from the main index file if it exists
+$login_error = $login_error ?? null;
 ?>
 
 <div class="row justify-content-center">
@@ -30,8 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h3 class="text-center">Login</h3>
             </div>
             <div class="card-body">
-                <?php if (isset($error)): ?>
-                    <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+                <?php if (isset($login_error)): ?>
+                    <div class="alert alert-danger"><?php echo htmlspecialchars($login_error); ?></div>
                 <?php endif; ?>
                 
                 <form method="POST" action="index.php?page=login">

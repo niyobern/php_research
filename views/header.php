@@ -1,3 +1,6 @@
+<?php
+// No whitespace before this line
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

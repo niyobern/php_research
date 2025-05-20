@@ -73,5 +73,4 @@ try {
     
 } catch(PDOException $e) {
     throw new Exception("Database setup failed: " . $e->getMessage());
-}
-?> 
+} 
