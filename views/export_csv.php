@@ -30,8 +30,10 @@ foreach ($responses as $resp) {
     $row = [$resp['participant_id']];
     $answers = [];
     foreach (explode(',', $resp['responses']) as $pair) {
-        list($qid, $answer) = explode(':', $pair, 2);
-        $answers[$qid] = $answer;
+        if (strpos($pair, ':') !== false) {
+            list($qid, $answer) = explode(':', $pair, 2);
+            $answers[$qid] = $answer;
+        }
     }
     foreach ($questions as $q) {
         $row[] = $answers[$q['id']] ?? '';

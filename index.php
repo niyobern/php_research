@@ -15,6 +15,13 @@ function get_flash() {
     return null;
 }
 
+// Handle CSV export before any output
+$page = isset($_GET['page']) ? $_GET['page'] : 'home';
+if ($page === 'export_csv') {
+    include 'views/export_csv.php';
+    exit;
+}
+
 // Basic routing
 $page = isset($_GET['page']) ? $_GET['page'] : 'home';
 
@@ -131,9 +138,6 @@ switch ($page) {
         break;
     case 'public_survey':
         include 'views/public_survey.php';
-        break;
-    case 'export_csv':
-        include 'views/export_csv.php';
         break;
     default:
         include 'views/404.php';
