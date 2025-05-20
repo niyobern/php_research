@@ -5,6 +5,14 @@ require_once 'config/database.php';
 // Basic routing
 $page = isset($_GET['page']) ? $_GET['page'] : 'home';
 
+// Handle logout before any output
+if ($page === 'logout') {
+    session_unset();
+    session_destroy();
+    header('Location: index.php?page=login');
+    exit();
+}
+
 // Authentication check
 function isAuthenticated() {
     return isset($_SESSION['user_id']);
@@ -107,6 +115,12 @@ switch ($page) {
         break;
     case 'view_responses':
         include 'views/view_responses.php';
+        break;
+    case 'public_survey':
+        include 'views/public_survey.php';
+        break;
+    case 'export_csv':
+        include 'views/export_csv.php';
         break;
     default:
         include 'views/404.php';
