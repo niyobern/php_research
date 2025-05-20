@@ -140,6 +140,15 @@ switch ($page) {
     case 'public_survey':
         include 'views/public_survey.php';
         break;
+    case 'reports':
+        include 'views/reports.php';
+        break;
+    case 'view_report':
+        include 'views/view_report.php';
+        break;
+    case 'generate_pdf':
+        include 'views/generate_pdf.php';
+        break;
     case 'admin':
         include 'views/admin.php';
         break;

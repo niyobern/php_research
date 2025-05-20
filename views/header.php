@@ -33,6 +33,11 @@
                                 <i class="bi bi-folder me-1"></i>Research Projects
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.php?page=reports">
+                                <i class="bi bi-file-earmark-text me-1"></i>Reports
+                            </a>
+                        </li>
                         <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                         <li class="nav-item">
                             <a class="nav-link" href="index.php?page=admin">
