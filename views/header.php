@@ -54,7 +54,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
-    <div class="container mt-4">
+    <div class="container mt-4 main-content">
         <?php
         // Breadcrumbs logic
         $page = $_GET['page'] ?? 'home';

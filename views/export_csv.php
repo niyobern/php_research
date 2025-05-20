@@ -39,4 +39,4 @@ foreach ($responses as $resp) {
     fputcsv($output, $row);
 }
 fclose($output);
-exit; 
+exit;

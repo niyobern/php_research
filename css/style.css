@@ -118,5 +118,10 @@ body {
 .stat-card .label {
     color: #6c757d;
     font-size: 0.875rem;
-} 
+}
+
+.main-content {
+    padding-bottom: 2rem !important;
+    /* padding-left: 2rem !important;
+    padding-right: 2rem !important; */
 } 
