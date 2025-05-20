@@ -23,9 +23,6 @@
                         <li class="nav-item">
                             <a class="nav-link" href="index.php?page=projects">Research Projects</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="index.php?page=surveys">Surveys</a>
-                        </li>
                     <?php endif; ?>
                 </ul>
                 <ul class="navbar-nav">
