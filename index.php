@@ -139,6 +139,18 @@ switch ($page) {
     case 'public_survey':
         include 'views/public_survey.php';
         break;
+    case 'admin':
+        include 'views/admin.php';
+        break;
+    case 'admin_users':
+        include 'views/admin_users.php';
+        break;
+    case 'admin_projects':
+        include 'views/admin_projects.php';
+        break;
+    case 'admin_surveys':
+        include 'views/admin_surveys.php';
+        break;
     default:
         include 'views/404.php';
 }

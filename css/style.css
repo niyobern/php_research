@@ -1,59 +1,63 @@
 /* Custom styles for Research Survey Management Tool */
 
-/* Remove or comment out problematic overrides */
-/*
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: monospace;
-}
-
+/* Base styles */
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
     background-color: #f8f9fa;
+    color: #212529;
 }
 
-.container {
-    display: flex;
-    gap: 5px;
-    padding: 5px;
-    border: 15px solid #808080;
-    background: white;
-}
-
-.form-container {
-    width: 400px;
-    border: 10px solid #808000;
-    position: relative;
-}
-*/
-
+/* Navigation */
 .navbar {
     box-shadow: 0 2px 4px rgba(0,0,0,.1);
+    padding: 1rem 0;
 }
 
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+/* Cards and containers */
 .card {
-    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,.05);
+    border: none;
     margin-bottom: 1.5rem;
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
 }
 
 .card-header {
     background-color: #fff;
-    border-bottom: 1px solid rgba(0,0,0,.125);
+    border-bottom: 1px solid rgba(0,0,0,.05);
+    padding: 1rem 1.25rem;
 }
 
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Lists and items */
 .list-group-item {
     transition: all 0.2s ease-in-out;
+    border: 1px solid rgba(0,0,0,.05);
+    margin-bottom: 0.5rem;
+    border-radius: 0.25rem !important;
 }
 
 .list-group-item:hover {
     background-color: #f8f9fa;
     transform: translateX(5px);
+}
+
+/* Buttons */
+.btn {
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease-in-out;
 }
 
 .btn-primary {
@@ -64,64 +68,156 @@ body {
 .btn-primary:hover {
     background-color: #0b5ed7;
     border-color: #0a58ca;
+    transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+    color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-outline-primary:hover {
+    background-color: #0d6efd;
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+/* Forms */
+.form-control {
+    padding: 0.75rem 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
 .form-control:focus {
     border-color: #86b7fe;
-    box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
+    box-shadow: 0 0 0 0.25rem rgba(13,110,253,.15);
 }
 
+/* Alerts */
 .alert {
     border-radius: 0.25rem;
     margin-bottom: 1rem;
+    padding: 1rem;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,.05);
 }
 
-.footer {
-    border-top: 1px solid #dee2e6;
-    padding: 1rem 0;
-    margin-top: 2rem;
+/* Dashboard stats */
+.stat-card {
+    text-align: center;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,.05);
+    transition: transform 0.2s ease-in-out;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card .number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #0d6efd;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card .label {
+    color: #6c757d;
+    font-size: 1rem;
+    font-weight: 500;
 }
 
 /* Survey form styles */
 .question-container {
     background-color: #fff;
     border: 1px solid #dee2e6;
-    border-radius: 0.25rem;
-    padding: 1rem;
-    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,.05);
 }
 
 .question-options {
     margin-left: 1.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 0.25rem;
 }
 
 /* Response view styles */
 .response-summary {
     background-color: #fff;
-    border-radius: 0.25rem;
-    padding: 1rem;
-    margin-bottom: 1rem;
-}
-
-/* Dashboard stats */
-.stat-card {
-    text-align: center;
+    border-radius: 0.5rem;
     padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,.05);
 }
 
-.stat-card .number {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #0d6efd;
+/* Tables */
+.table {
+    background: #fff;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,.05);
 }
 
-.stat-card .label {
-    color: #6c757d;
-    font-size: 0.875rem;
+.table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    padding: 1rem;
 }
 
+.table td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+/* Main content area */
 .main-content {
-    padding-bottom: 2rem !important;
-    padding-left: 2rem !important;
-    padding-right: 2rem !important;
+    padding: 2rem !important;
+    min-height: calc(100vh - 200px);
+}
+
+/* Footer */
+.footer {
+    background-color: #fff;
+    border-top: 1px solid #dee2e6;
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+    box-shadow: 0 -2px 4px rgba(0,0,0,.05);
+}
+
+/* Breadcrumbs */
+.breadcrumb {
+    background: transparent;
+    padding: 0.75rem 0;
+    margin-bottom: 1.5rem;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 1rem !important;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .stat-card {
+        padding: 1.5rem;
+    }
+    
+    .stat-card .number {
+        font-size: 2rem;
+    }
 } 

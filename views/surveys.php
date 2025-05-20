@@ -21,6 +21,31 @@ if (isset($_GET['delete_survey'])) {
     header('Location: index.php?page=surveys&project_id=' . intval($_GET['project_id']));
     exit();
 }
+// Handle survey duplication
+if (isset($_GET['duplicate_survey'])) {
+    $orig_id = intval($_GET['duplicate_survey']);
+    // Get original survey
+    $stmt = $pdo->prepare("SELECT * FROM Surveys WHERE id = ?");
+    $stmt->execute([$orig_id]);
+    $orig = $stmt->fetch();
+    if ($orig) {
+        // Duplicate survey
+        $stmt = $pdo->prepare("INSERT INTO Surveys (project_id, title, description, status) VALUES (?, ?, ?, 'draft')");
+        $stmt->execute([$orig['project_id'], $orig['title'] . ' (Copy)', $orig['description']]);
+        $new_survey_id = $pdo->lastInsertId();
+        // Duplicate questions
+        $stmt = $pdo->prepare("SELECT * FROM Questions WHERE survey_id = ?");
+        $stmt->execute([$orig_id]);
+        $questions = $stmt->fetchAll();
+        foreach ($questions as $q) {
+            $stmt2 = $pdo->prepare("INSERT INTO Questions (survey_id, question_text, question_type, options, required, order_number) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt2->execute([$new_survey_id, $q['question_text'], $q['question_type'], $q['options'], $q['required'], $q['order_number']]);
+        }
+        set_flash('Survey duplicated!', 'success');
+    }
+    header('Location: index.php?page=surveys&project_id=' . intval($_GET['project_id']));
+    exit();
+}
 // Handle new survey creation
 if (isset($_POST['create_survey'])) {
     $title = trim($_POST['title'] ?? '');
@@ -70,7 +95,9 @@ $surveys = $stmt->fetchAll();
                         <div class="mt-2">
                             <a href="index.php?page=create_survey&survey_id=<?php echo $survey['id']; ?>" class="btn btn-sm btn-outline-secondary">Edit Survey</a>
                             <a href="index.php?page=surveys&project_id=<?php echo $project_id; ?>&delete_survey=<?php echo $survey['id']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this survey?');">Delete</a>
+                            <a href="index.php?page=surveys&project_id=<?php echo $project_id; ?>&duplicate_survey=<?php echo $survey['id']; ?>" class="btn btn-sm btn-outline-warning">Duplicate</a>
                             <a href="index.php?page=view_responses&survey_id=<?php echo $survey['id']; ?>" class="btn btn-sm btn-outline-success">View Responses</a>
+                            <a href="index.php?page=public_survey&survey_id=<?php echo $survey['id']; ?>&preview=1" class="btn btn-sm btn-outline-secondary" target="_blank">Preview</a>
                             <a href="index.php?page=public_survey&survey_id=<?php echo $survey['id']; ?>" class="btn btn-sm btn-outline-info" target="_blank" id="public-link-<?php echo $survey['id']; ?>">Public Link</a>
                             <button type="button" class="btn btn-sm btn-outline-primary" onclick="copyPublicLink('<?php echo htmlspecialchars('http://' . $_SERVER['HTTP_HOST'] . '/index.php?page=public_survey&survey_id=' . $survey['id']); ?>')">Copy Link</button>
                         </div>

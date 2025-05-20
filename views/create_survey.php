@@ -34,8 +34,10 @@ if (isset($_POST['edit_question'])) {
     }
     $required = isset($_POST['edit_required']) ? 1 : 0;
     $order_number = intval($_POST['edit_order_number'] ?? 1);
-    $stmt = $pdo->prepare("UPDATE Questions SET question_text = ?, question_type = ?, options = ?, required = ?, order_number = ? WHERE id = ? AND survey_id = ?");
-    $stmt->execute([$question_text, $question_type, $options, $required, $order_number, $edit_id, intval($_GET['survey_id'])]);
+    $show_if_question_id = $_POST['edit_show_if_question_id'] ?? null;
+    $show_if_value = $_POST['edit_show_if_value'] ?? null;
+    $stmt = $pdo->prepare("UPDATE Questions SET question_text = ?, question_type = ?, options = ?, required = ?, order_number = ?, show_if_question_id = ?, show_if_value = ? WHERE id = ? AND survey_id = ?");
+    $stmt->execute([$question_text, $question_type, $options, $required, $order_number, $show_if_question_id, $show_if_value, $edit_id, intval($_GET['survey_id'])]);
     set_flash('Question updated successfully!', 'success');
     header('Location: index.php?page=create_survey&survey_id=' . intval($_GET['survey_id']));
     exit();
@@ -52,18 +54,32 @@ if (isset($_POST['add_question'])) {
     }
     $required = isset($_POST['required']) ? 1 : 0;
     $order_number = intval($_POST['order_number'] ?? 1);
+    $show_if_question_id = $_POST['show_if_question_id'] ?? null;
+    $show_if_value = $_POST['show_if_value'] ?? null;
     $errors = [];
     if ($question_text === '') {
         $errors[] = 'Question text is required.';
     }
     if (empty($errors)) {
-        $stmt = $pdo->prepare("INSERT INTO Questions (survey_id, question_text, question_type, options, required, order_number) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$survey_id, $question_text, $question_type, $options, $required, $order_number]);
+        $stmt = $pdo->prepare("INSERT INTO Questions (survey_id, question_text, question_type, options, required, order_number, show_if_question_id, show_if_value) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$survey_id, $question_text, $question_type, $options, $required, $order_number, $show_if_question_id, $show_if_value]);
         echo '<div class="alert alert-success">Question added successfully!</div>';
     } else {
         echo '<div class="alert alert-danger">' . implode('<br>', $errors) . '</div>';
     }
 }
+
+// Add scheduling fields to survey editing
+if (isset($_POST['update_survey_schedule'])) {
+    $open_date = $_POST['open_date'] ?? null;
+    $close_date = $_POST['close_date'] ?? null;
+    $stmt = $pdo->prepare("UPDATE Surveys SET open_date = ?, close_date = ? WHERE id = ?");
+    $stmt->execute([$open_date, $close_date, $survey_id]);
+    set_flash('Survey schedule updated!', 'success');
+    header('Location: index.php?page=create_survey&survey_id=' . $survey_id);
+    exit();
+}
+
 // Fetch all questions for the survey
 $stmt = $pdo->prepare("SELECT * FROM Questions WHERE survey_id = ? ORDER BY order_number ASC, id ASC");
 $stmt->execute([$survey_id]);
@@ -111,6 +127,8 @@ $questions = $stmt->fetchAll();
                     <option value="multiple_choice">Multiple Choice</option>
                     <option value="single_choice">Single Choice</option>
                     <option value="rating">Rating</option>
+                    <option value="date">Date</option>
+                    <option value="likert">Likert Scale</option>
                 </select>
             </div>
             <div class="mb-3" id="options_field" style="display:none;">
@@ -125,8 +143,34 @@ $questions = $stmt->fetchAll();
                 <input class="form-check-input" type="checkbox" name="required" id="required">
                 <label class="form-check-label" for="required">Required</label>
             </div>
+            <div class="mb-3">
+                <label class="form-label">Show this question only if...</label>
+                <select class="form-select" name="show_if_question_id">
+                    <option value="">Always show</option>
+                    <?php foreach ($questions as $prev_q): ?>
+                        <option value="<?php echo $prev_q['id']; ?>">Q<?php echo $prev_q['order_number']; ?>: <?php echo htmlspecialchars(substr($prev_q['question_text'], 0, 30)); ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <input type="text" class="form-control mt-2" name="show_if_value" placeholder="...the answer is (leave blank for any answer)">
+            </div>
             <button type="submit" name="add_question" class="btn btn-primary">Add Question</button>
         </form>
+        <div class="card card-body mb-4">
+            <h4>Survey Scheduling</h4>
+            <form method="POST">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="open_date" class="form-label">Open Date</label>
+                        <input type="datetime-local" class="form-control" id="open_date" name="open_date" value="<?php echo isset($survey['open_date']) ? date('Y-m-d\TH:i', strtotime($survey['open_date'])) : ''; ?>">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="close_date" class="form-label">Close Date</label>
+                        <input type="datetime-local" class="form-control" id="close_date" name="close_date" value="<?php echo isset($survey['close_date']) ? date('Y-m-d\TH:i', strtotime($survey['close_date'])) : ''; ?>">
+                    </div>
+                </div>
+                <button type="submit" name="update_survey_schedule" class="btn btn-outline-primary">Update Schedule</button>
+            </form>
+        </div>
     </div>
 </div>
 <!-- Edit Question Modal -->
@@ -151,6 +195,8 @@ $questions = $stmt->fetchAll();
               <option value="multiple_choice">Multiple Choice</option>
               <option value="single_choice">Single Choice</option>
               <option value="rating">Rating</option>
+              <option value="date">Date</option>
+              <option value="likert">Likert Scale</option>
             </select>
           </div>
           <div class="mb-3" id="edit_options_field" style="display:none;">
@@ -164,6 +210,16 @@ $questions = $stmt->fetchAll();
           <div class="form-check mb-3">
             <input class="form-check-input" type="checkbox" name="edit_required" id="edit_required">
             <label class="form-check-label" for="edit_required">Required</label>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Show this question only if...</label>
+            <select class="form-select" name="edit_show_if_question_id" id="edit_show_if_question_id">
+                <option value="">Always show</option>
+                <?php foreach ($questions as $prev_q): ?>
+                    <option value="<?php echo $prev_q['id']; ?>">Q<?php echo $prev_q['order_number']; ?>: <?php echo htmlspecialchars(substr($prev_q['question_text'], 0, 30)); ?></option>
+                <?php endforeach; ?>
+            </select>
+            <input type="text" class="form-control mt-2" name="edit_show_if_value" id="edit_show_if_value" placeholder="...the answer is (leave blank for any answer)">
           </div>
         </div>
         <div class="modal-footer">
