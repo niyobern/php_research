@@ -47,7 +47,6 @@ $projects = $stmt->fetchAll();
 <div class="container">
     <h2 class="mt-4">Research Projects</h2>
     <p>This is where you will be able to create, view, and manage your research projects.</p>
-    <div class="alert alert-info">Project management functionality coming soon!</div>
 </div>
 
 <div class="row">
