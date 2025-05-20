@@ -21,7 +21,7 @@ try {
     )";
     $pdo->exec($sql);
 
-    // Create Research Projects table
+    // Research Projects table
     $sql = "CREATE TABLE IF NOT EXISTS ResearchProjects (
         id INT AUTO_INCREMENT PRIMARY KEY,
         title VARCHAR(255) NOT NULL,
@@ -33,7 +33,7 @@ try {
     )";
     $pdo->exec($sql);
 
-    // Create Surveys table (with open_date and close_date for scheduling)
+    // surveys
     $sql = "CREATE TABLE IF NOT EXISTS Surveys (
         id INT AUTO_INCREMENT PRIMARY KEY,
         project_id INT NOT NULL,
@@ -47,7 +47,7 @@ try {
     )";
     $pdo->exec($sql);
 
-    // Create Questions table (supporting all types and conditional logic)
+    // questions
     $sql = "CREATE TABLE IF NOT EXISTS Questions (
         id INT AUTO_INCREMENT PRIMARY KEY,
         survey_id INT NOT NULL,

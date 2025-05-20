@@ -1,4 +1,4 @@
-// Main JavaScript file for Research Survey Management Tool
+// Main JavaScript file for the project
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize tooltips
