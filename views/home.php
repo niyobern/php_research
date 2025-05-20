@@ -20,6 +20,17 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([$_SESSION['user_id']]);
 $surveys = $stmt->fetchAll();
+
+// Dashboard summary
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM ResearchProjects WHERE researcher_id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$total_projects = $stmt->fetchColumn();
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM Surveys s JOIN ResearchProjects p ON s.project_id = p.id WHERE p.researcher_id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$total_surveys = $stmt->fetchColumn();
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM Responses r JOIN Surveys s ON r.survey_id = s.id JOIN ResearchProjects p ON s.project_id = p.id WHERE p.researcher_id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$total_responses = $stmt->fetchColumn();
 ?>
 
 <div class="row">
@@ -27,6 +38,27 @@ $surveys = $stmt->fetchAll();
         <div class="d-flex justify-content-between align-items-center">
             <h2>Dashboard</h2>
             <a href="index.php?page=projects&action=new" class="btn btn-primary">New Research Project</a>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="number"><?php echo $total_projects; ?></div>
+            <div class="label">Projects</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="number"><?php echo $total_surveys; ?></div>
+            <div class="label">Surveys</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="number"><?php echo $total_responses; ?></div>
+            <div class="label">Responses</div>
         </div>
     </div>
 </div>

@@ -48,4 +48,45 @@
             </div>
         </div>
     </nav>
-    <div class="container mt-4"> 
+    <?php $flash = get_flash(); if ($flash): ?>
+        <div class="alert alert-<?php echo $flash['type']; ?> alert-dismissible fade show mt-3" role="alert">
+            <?php echo htmlspecialchars($flash['msg']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+    <div class="container mt-4">
+        <?php
+        // Breadcrumbs logic
+        $page = $_GET['page'] ?? 'home';
+        $crumbs = [['Home', 'index.php']];
+        if ($page === 'projects') {
+            $crumbs[] = ['Projects', 'index.php?page=projects'];
+        } elseif ($page === 'surveys' && isset($_GET['project_id'])) {
+            $crumbs[] = ['Projects', 'index.php?page=projects'];
+            $crumbs[] = ['Surveys', 'index.php?page=surveys&project_id=' . intval($_GET['project_id'])];
+        } elseif ($page === 'create_survey' && isset($_GET['survey_id'])) {
+            $crumbs[] = ['Projects', 'index.php?page=projects'];
+            $crumbs[] = ['Surveys', 'index.php?page=surveys'];
+            $crumbs[] = ['Edit Survey', '#'];
+        } elseif ($page === 'view_responses' && isset($_GET['survey_id'])) {
+            $crumbs[] = ['Projects', 'index.php?page=projects'];
+            $crumbs[] = ['Surveys', 'index.php?page=surveys'];
+            $crumbs[] = ['Responses', '#'];
+        } elseif ($page === 'public_survey' && isset($_GET['survey_id'])) {
+            $crumbs[] = ['Public Survey', '#'];
+        }
+        ?>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <?php foreach ($crumbs as $i => $c): ?>
+                    <li class="breadcrumb-item<?php if ($i === count($crumbs) - 1) echo ' active'; ?>"<?php if ($i === count($crumbs) - 1) echo ' aria-current="page"'; ?>>
+                        <?php if ($i !== count($crumbs) - 1): ?>
+                            <a href="<?php echo $c[1]; ?>"><?php echo htmlspecialchars($c[0]); ?></a>
+                        <?php else: ?>
+                            <?php echo htmlspecialchars($c[0]); ?>
+                        <?php endif; ?>
+                    </li>
+                <?php endforeach; ?>
+            </ol>
+        </nav>
+    </div> 

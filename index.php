@@ -2,6 +2,19 @@
 session_start();
 require_once 'config/database.php';
 
+// Flash message helpers
+function set_flash($msg, $type = 'success') {
+    $_SESSION['flash'] = ['msg' => $msg, 'type' => $type];
+}
+function get_flash() {
+    if (isset($_SESSION['flash'])) {
+        $flash = $_SESSION['flash'];
+        unset($_SESSION['flash']);
+        return $flash;
+    }
+    return null;
+}
+
 // Basic routing
 $page = isset($_GET['page']) ? $_GET['page'] : 'home';
 

@@ -12,6 +12,15 @@ if (!$project) {
     echo '<div class="alert alert-danger">Project not found or access denied.</div>';
     return;
 }
+// Handle survey deletion
+if (isset($_GET['delete_survey'])) {
+    $delete_id = intval($_GET['delete_survey']);
+    $stmt = $pdo->prepare("DELETE FROM Surveys WHERE id = ?");
+    $stmt->execute([$delete_id]);
+    set_flash('Survey deleted successfully!', 'success');
+    header('Location: index.php?page=surveys&project_id=' . intval($_GET['project_id']));
+    exit();
+}
 // Handle new survey creation
 if (isset($_POST['create_survey'])) {
     $title = trim($_POST['title'] ?? '');
@@ -42,14 +51,28 @@ $surveys = $stmt->fetchAll();
         <?php else: ?>
             <ul class="list-group mb-4">
                 <?php foreach ($surveys as $survey): ?>
+                    <?php
+                    // Get response count for this survey
+                    $stmt2 = $pdo->prepare("SELECT COUNT(DISTINCT participant_id) FROM Responses WHERE survey_id = ?");
+                    $stmt2->execute([$survey['id']]);
+                    $response_count = $stmt2->fetchColumn();
+                    // Status badge
+                    $badge_class = 'secondary';
+                    if ($survey['status'] === 'active') $badge_class = 'success';
+                    elseif ($survey['status'] === 'closed') $badge_class = 'danger';
+                    ?>
                     <li class="list-group-item">
-                        <strong><?php echo htmlspecialchars($survey['title']); ?></strong><br>
+                        <strong><?php echo htmlspecialchars($survey['title']); ?></strong>
+                        <span class="badge bg-<?php echo $badge_class; ?> ms-2"><?php echo ucfirst($survey['status']); ?></span>
+                        <span class="badge bg-info text-dark ms-2">Responses: <?php echo $response_count; ?></span><br>
                         <small>Status: <?php echo htmlspecialchars($survey['status']); ?> | Created: <?php echo htmlspecialchars($survey['created_at']); ?></small><br>
                         <span><?php echo nl2br(htmlspecialchars($survey['description'])); ?></span>
                         <div class="mt-2">
                             <a href="index.php?page=create_survey&survey_id=<?php echo $survey['id']; ?>" class="btn btn-sm btn-outline-secondary">Edit Survey</a>
+                            <a href="index.php?page=surveys&project_id=<?php echo $project_id; ?>&delete_survey=<?php echo $survey['id']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this survey?');">Delete</a>
                             <a href="index.php?page=view_responses&survey_id=<?php echo $survey['id']; ?>" class="btn btn-sm btn-outline-success">View Responses</a>
-                            <a href="index.php?page=public_survey&survey_id=<?php echo $survey['id']; ?>" class="btn btn-sm btn-outline-info" target="_blank">Public Link</a>
+                            <a href="index.php?page=public_survey&survey_id=<?php echo $survey['id']; ?>" class="btn btn-sm btn-outline-info" target="_blank" id="public-link-<?php echo $survey['id']; ?>">Public Link</a>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="copyPublicLink('<?php echo htmlspecialchars('http://' . $_SERVER['HTTP_HOST'] . '/index.php?page=public_survey&survey_id=' . $survey['id']); ?>')">Copy Link</button>
                         </div>
                     </li>
                 <?php endforeach; ?>
@@ -78,4 +101,11 @@ $surveys = $stmt->fetchAll();
             <button type="submit" name="create_survey" class="btn btn-primary">Create Survey</button>
         </form>
     </div>
-</div> 
+</div>
+<script>
+function copyPublicLink(link) {
+    navigator.clipboard.writeText(link).then(function() {
+        alert('Public link copied to clipboard!');
+    });
+}
+</script> 
